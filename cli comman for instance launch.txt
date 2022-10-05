@@ -1,0 +1,149 @@
+VPC: 
+==========================================================================
+https://docs.aws.amazon.com/cli/latest/reference/ec2/
+VPC CREATION AND DELETION:
+aws ec2 create-vpc --cidr-block 10.0.0.0/16 --instance-tenancy default
+aws ec2 delete-vpc --vpc-id vpc-09f2ecbaa0ff4c880
+
+SUBNET CREATION AND DELETION:
+aws ec2 create-subnet --vpc-id vpc-031cbe989e46faf82 --cidr-block 10.0.1.0/24 --tag-specifications ResourceType=subnet,Tags=[{Key=Name,Value=my-ipv4-only-subnet}]  
+aws ec2 delete-subnet --subnet-id subnet-0d8a27adad3905545
+
+INTERNET CREATION AND DELETION:
+aws ec2 create-internet-gateway --tag-specifications ResourceType=internet-gateway,Tags=[{Key=Name,Value=my-igw}]
+aws ec2 attach-internet-gateway --internet-gateway-id igw-013ad1ba279a69cc8 --vpc-id vpc-031cbe989e46faf82
+
+ROUTE TABLE CREATION:
+aws ec2 create-route-table --vpc-id vpc-031cbe989e46faf82
+
+
+
+How to create Key-pair through aws cli
+---------------------------------------
+1. Install aws cli into Local system
+2. Create IAM user with admin access and do an aws configure 
+aws iam create-user --user-name adminuser
+aws iam list-users
+aws iam delete-user --user-name adminuser
+aws iam list-policies
+
+
+KEY-PAIR
+===================================================================================
+List key pair
+aws ec2 describe-key-pairs
+
+Create an Key-Pair
+aws ec2 create-key-pair --key-name sample --query 'KeyMaterial' --output text > sample.pem
+
+Remove the key-pair:
+aws ec2 delete-key-pair --key-name sample
+
+
+
+SECURITY GROUP:
+===================================================================================
+Security-Group Creation using aws cli
+aws ec2 create-security-group --group-name secgrp --description "My security group"
+
+Describe Security Group
+aws ec2 describe-security-groups
+aws ec2 describe-security-groups --group-names secgrp
+
+Delete security Group:
+aws ec2 delete-security-group --group-name MySecurityGroup
+aws ec2 delete-security-group --group-id sg-903004f8
+
+
+FETCH AWS ACCOUNTS PUBLIC IP:
+===================================================================================
+curl https://checkip.amazonaws.com
+
+Add ingress rule to the security group
+aws ec2 authorize-security-group-ingress --group-name secgrp --protocol tcp --port 22 --cidr 13.126.89.64/32
+
+aws ec2 authorize-security-group-ingress --group-name secgrp --protocol tcp --port 80 --cidr 13.126.89.64/32
+
+Launch Instance:
+==================================================================================
+ami-id: ami-08181691f669ef7d2
+KeyPair: sample
+Sec grp Id: sg-071050f03bf94fdbe
+subnet-id: subnet-dd133491
+
+aws ec2 describe-subnets
+
+aws ec2 run-instances --image-id ami-08181691f669ef7d2 --count 2 --instance-type t2.micro --key-name sample --security-group-ids sg-071050f03bf94fdbe --subnet-id subnet-dd133491
+
+
+Login with EC2 server:
+===================================================================================
+3.110.122.119
+
+chmod 400 hellokey.pem
+
+ssh -i hellokey.pem ec2-user@3.110.122.119
+
+Tag the Name:
+===================================================================================
+aws ec2 describe-instances
+aws ec2 describe-instances --region ap-south-1
+aws ec2 create-tags --resources i-0a2fc1ed0ade856af --tags Key=Name,Value=instance1
+i-0e412bf844ff2d110
+
+aws ec2 create-tags --resources i-08e58940f18273ce7 --tags Key=Name,Value=instance2
+
+How to Terminate/stop/start Instance:
+===================================================================================
+aws ec2 terminate-instances --instance-ids i-0a2fc1ed0ade856af i-08e58940f18273ce7
+aws ec2 stop-instances --instance-ids i-010645851d977b9fb
+aws ec2 start-instances --instance-ids i-0e412bf844ff2d110
+
+
+
+
+aws cli with Redhat Intance:
+==================================================================================
+# Switch root user
+sudo su -   
+
+aws s3 ls 
+
+# Python Installation and Verification
+yum install python3 # Install python
+python3 --version # check python installation
+
+# update and upgrade redhat instance
+yum update && yum upgrade 
+
+#download python script
+curl -O https://bootstrap.pypa.io/get-pip.py 
+
+# run python script
+python3 get-pip.py --user 
+
+
+# check pythin installation package ...it wont work
+pip  
+
+# set path and # set source
+export PATH=~/.local/bin:$PATH 
+source ~/.bash_profile  
+
+# check pythin installation package ...it can work
+pip
+   
+# install awscli
+pip install awscli 
+
+
+# Do aws configure
+aws configure 
+access key
+Secret access key
+region:
+Output format: 
+aws s3 ls  # list buckets from s3 from our own account
+aws s3 mb s3://sriraghavendraswamylog # make new bucket
+aws s3 rb s3://sriraghavendraswamy # delete new bucket
+
